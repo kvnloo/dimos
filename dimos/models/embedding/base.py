@@ -126,23 +126,6 @@ class EmbeddingModel(ABC):
         candidate_tensors = torch.stack([c.to_torch(self.device) for c in candidates])
         return query_tensor @ candidate_tensors.T
 
-    def compare_many_to_many(
-        self, queries: list[Embedding], candidates: list[Embedding]
-    ) -> torch.Tensor:
-        """
-        Efficiently compare all queries against all candidates on GPU.
-
-        Args:
-            queries: List of query embeddings
-            candidates: List of candidate embeddings
-
-        Returns:
-            torch.Tensor of similarities (M, N) where M=len(queries), N=len(candidates)
-        """
-        query_tensors = torch.stack([q.to_torch(self.device) for q in queries])
-        candidate_tensors = torch.stack([c.to_torch(self.device) for c in candidates])
-        return query_tensors @ candidate_tensors.T
-
     def query(
         self, query_emb: Embedding, candidates: list[Embedding], top_k: int = 5
     ) -> list[tuple[int, float]]:
@@ -160,6 +143,5 @@ class EmbeddingModel(ABC):
         similarities = self.compare_one_to_many(query_emb, candidates)
         top_values, top_indices = similarities.topk(k=min(top_k, len(candidates)))
         return [(idx.item(), val.item()) for idx, val in zip(top_indices, top_values, strict=False)]
-
 
         ...

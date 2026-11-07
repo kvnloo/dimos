@@ -253,25 +253,6 @@ class CoordinatorClient:
 # =============================================================================
 
 
-def parse_joint_input(line: str, num_joints: int) -> list[float] | None:
-    """Parse joint positions from user input (degrees by default, 'r' suffix for radians)."""
-    parts = line.strip().split()
-    if len(parts) != num_joints:
-        return None
-
-    positions = []
-    for part in parts:
-        try:
-            if part.endswith("r"):
-                positions.append(float(part[:-1]))
-            else:
-                positions.append(math.radians(float(part)))
-        except ValueError:
-            return None
-
-    return positions
-
-
 def format_positions(positions: list[float], as_degrees: bool = True) -> str:
     """Format positions for display."""
     if as_degrees:

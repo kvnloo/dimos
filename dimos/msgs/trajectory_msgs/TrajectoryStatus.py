@@ -83,14 +83,6 @@ class TrajectoryStatus:
         """Get human-readable state name."""
         return self.state.name
 
-    def is_done(self) -> bool:
-        """Check if trajectory execution is finished (completed, aborted, or fault)."""
-        return self.state in (
-            TrajectoryState.COMPLETED,
-            TrajectoryState.ABORTED,
-            TrajectoryState.FAULT,
-        )
-
     def is_active(self) -> bool:
         """Check if trajectory is currently executing."""
         return self.state == TrajectoryState.EXECUTING

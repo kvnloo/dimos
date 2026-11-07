@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Protocol, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from numba import njit, prange  # type: ignore[import-untyped]
 import numpy as np
@@ -111,19 +111,6 @@ class OccupancyConfig:
 
 
 ConfigT = TypeVar("ConfigT", bound=OccupancyConfig, covariant=True)
-
-
-class OccupancyFn(Protocol[ConfigT]):
-    """Protocol for pointcloud-to-occupancy conversion functions.
-
-    Functions matching this protocol take a PointCloud2 and config kwargs,
-    returning an OccupancyGrid. Call with: fn(cloud, resolution=0.1, ...)
-    """
-
-    @property
-    def config_class(self) -> type[ConfigT]: ...
-
-    def __call__(self, cloud: PointCloud2, **kwargs: Any) -> OccupancyGrid: ...
 
 
 # Populated after function definitions below

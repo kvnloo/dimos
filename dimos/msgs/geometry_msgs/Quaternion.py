@@ -111,10 +111,6 @@ class Quaternion(LCMQuaternion):  # type: ignore[misc]
     def radians(self) -> Vector3:
         return self.to_euler()
 
-    def to_radians(self) -> Vector3:
-        """Radians representation of the quaternion (x, y, z, w)."""
-        return self.to_euler()
-
     def to_rerun(self) -> rr.Quaternion:
         import rerun as rr
 

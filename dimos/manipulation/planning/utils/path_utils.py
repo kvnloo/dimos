@@ -35,7 +35,6 @@ import numpy as np
 from dimos.msgs.sensor_msgs import JointState
 
 if TYPE_CHECKING:
-    from numpy.typing import NDArray
 
     from dimos.manipulation.planning.spec import JointPath, WorldRobotID, WorldSpec
 
@@ -207,93 +206,3 @@ def compute_path_length(path: JointPath) -> float:
         length += float(np.linalg.norm(q_next - q_curr))
 
     return length
-
-
-def is_path_within_limits(
-    path: JointPath,
-    lower_limits: NDArray[np.float64],
-    upper_limits: NDArray[np.float64],
-) -> bool:
-    """Check if all waypoints in path are within joint limits.
-
-    Args:
-        path: Path to check (list of JointState waypoints)
-        lower_limits: Lower joint limits (radians)
-        upper_limits: Upper joint limits (radians)
-
-    Returns:
-        True if all waypoints are within limits
-    """
-    for state in path:
-        q = np.array(state.position, dtype=np.float64)
-        if np.any(q < lower_limits) or np.any(q > upper_limits):
-            return False
-    return True
-
-
-def clip_path_to_limits(
-    path: JointPath,
-    lower_limits: NDArray[np.float64],
-    upper_limits: NDArray[np.float64],
-) -> JointPath:
-    """Clip all waypoints in path to joint limits.
-
-    Args:
-        path: Path to clip (list of JointState waypoints)
-        lower_limits: Lower joint limits (radians)
-        upper_limits: Upper joint limits (radians)
-
-    Returns:
-        Path with all waypoints clipped to limits
-    """
-    clipped: list[JointState] = []
-    for state in path:
-        q = np.array(state.position, dtype=np.float64)
-        q_clipped = np.clip(q, lower_limits, upper_limits)
-        clipped.append(JointState(name=state.name, position=q_clipped.tolist()))
-    return clipped
-
-
-def reverse_path(path: JointPath) -> JointPath:
-    """Reverse a path (for returning to start, etc.).
-
-    Args:
-        path: Path to reverse
-
-    Returns:
-        Reversed path
-    """
-    return list(reversed(path))
-
-
-def concatenate_paths(
-    *paths: JointPath,
-    remove_duplicates: bool = True,
-) -> JointPath:
-    """Concatenate multiple paths into one.
-
-    Args:
-        *paths: Paths to concatenate (each is a list of JointState waypoints)
-        remove_duplicates: If True, remove duplicate waypoints at junctions
-
-    Returns:
-        Single concatenated path
-    """
-    result: list[JointState] = []
-
-    for path in paths:
-        if not path:
-            continue
-
-        if remove_duplicates and result:
-            # Check if last point matches first point (tight tolerance for joint space)
-            q_last = np.array(result[-1].position, dtype=np.float64)
-            q_first = np.array(path[0].position, dtype=np.float64)
-            if np.allclose(q_last, q_first, atol=1e-6, rtol=0):
-                result.extend(path[1:])
-            else:
-                result.extend(path)
-        else:
-            result.extend(path)
-
-    return result

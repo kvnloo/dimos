@@ -28,7 +28,6 @@ ahead of time.
 # Default color image size: 1920x1080 frame x 3 (RGB) x uint8
 DEFAULT_CAPACITY_COLOR_IMAGE = 1920 * 1080 * 3
 # Default depth image size: 1280x720 frame * 4 (float32 size)
-DEFAULT_CAPACITY_DEPTH_IMAGE = 1280 * 720 * 4
 
 # From https://github.com/lcm-proj/lcm.git
 LCM_MAX_CHANNEL_NAME_LENGTH = 63

@@ -67,30 +67,6 @@ if CLIP_AVAILABLE:
             vectors = [e.to_torch(self._model.device) for e in embeddings]
             return torch.stack(vectors)
 
-        def select_diverse_frames(self, frames: list[Any], max_frames: int = 3) -> list[Any]:
-            """Select diverse frames using greedy farthest-point sampling in CLIP space."""
-            if len(frames) <= max_frames:
-                return frames
-
-            embeddings = self._encode_images([f.image for f in frames])
-
-            # Greedy farthest-point sampling
-            selected_indices = [0]  # Always include first frame
-            remaining_indices = list(range(1, len(frames)))
-
-            while len(selected_indices) < max_frames and remaining_indices:
-                # Compute similarities: (num_remaining, num_selected)
-                similarities = embeddings[remaining_indices] @ embeddings[selected_indices].T
-                # Find max similarity for each remaining frame
-                max_similarities = similarities.max(dim=1)[0]
-                # Select frame most different from all selected
-                best_idx = int(max_similarities.argmin().item())
-
-                selected_indices.append(remaining_indices[best_idx])
-                remaining_indices.pop(best_idx)
-
-            return [frames[i] for i in sorted(selected_indices)]
-
         def close(self) -> None:
             """Clean up CLIP model."""
             if hasattr(self, "_model"):

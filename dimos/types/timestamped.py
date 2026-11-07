@@ -136,10 +136,6 @@ class TimestampedBufferCollection(InMemoryStore[T]):
         """Remove a timestamped item. Returns True if found and removed."""
         return self._delete(item.ts) is not None
 
-    def remove_by_timestamp(self, timestamp: float) -> bool:
-        """Remove an item by timestamp. Returns True if found and removed."""
-        return self._delete(timestamp) is not None
-
 
 class MatchContainer(Timestamped, Generic[PRIMARY, SECONDARY]):
     """

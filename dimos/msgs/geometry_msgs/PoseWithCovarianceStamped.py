@@ -15,7 +15,6 @@
 from __future__ import annotations
 
 import time
-from typing import TypeAlias
 
 from dimos_lcm.geometry_msgs import (
     PoseWithCovarianceStamped as LCMPoseWithCovarianceStamped,
@@ -28,11 +27,6 @@ from dimos.msgs.geometry_msgs.PoseWithCovariance import PoseWithCovariance
 from dimos.types.timestamped import Timestamped
 
 # Types that can be converted to/from PoseWithCovarianceStamped
-PoseWithCovarianceStampedConvertable: TypeAlias = (
-    tuple[PoseConvertable, list[float] | np.ndarray]  # type: ignore[type-arg]
-    | LCMPoseWithCovarianceStamped
-    | dict[str, PoseConvertable | list[float] | np.ndarray | float | str]  # type: ignore[type-arg]
-)
 
 
 def sec_nsec(ts):  # type: ignore[no-untyped-def]

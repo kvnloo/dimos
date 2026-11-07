@@ -21,7 +21,4 @@ class RobotCapability(Enum):
     """Enum defining possible robot capabilities."""
 
     MANIPULATION = auto()
-    VISION = auto()
-    AUDIO = auto()
-    SPEECH = auto()
     LOCOMOTION = auto()

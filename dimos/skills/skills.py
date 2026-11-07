@@ -115,14 +115,6 @@ class SkillLibrary:
 
     _instances: dict[str, dict] = {}  # type: ignore[type-arg]
 
-    def create_instance(self, name: str, **kwargs) -> None:  # type: ignore[no-untyped-def]
-        # Key based only on the name
-        key = name
-
-        if key not in self._instances:
-            # Instead of creating an instance, store the args for later use
-            self._instances[key] = kwargs
-
     def call(self, name: str, **args):  # type: ignore[no-untyped-def]
         try:
             # Get the stored args if available; otherwise, use an empty dict
@@ -194,61 +186,6 @@ class SkillLibrary:
             return True
         return False
 
-    def get_running_skills(self):  # type: ignore[no-untyped-def]
-        """
-        Get all running skills.
-
-        Returns:
-            A dictionary of running skill names and their (instance, subscription) tuples
-        """
-        return self._running_skills.copy()
-
-    def terminate_skill(self, name: str):  # type: ignore[no-untyped-def]
-        """
-        Terminate a running skill.
-
-        Args:
-            name: Name of the skill to terminate (will be converted to lowercase)
-
-        Returns:
-            A message indicating whether the skill was successfully terminated
-        """
-        name = name.lower()
-        if name in self._running_skills:
-            instance, subscription = self._running_skills[name]
-
-            try:
-                # Call the stop method if it exists
-                if hasattr(instance, "stop") and callable(instance.stop):
-                    instance.stop()
-                    logger.info(f"Stopped skill: {name}")
-                else:
-                    logger.warning(f"Skill {name} does not have a stop method")
-
-                # Also dispose the subscription if it exists
-                if (
-                    subscription is not None
-                    and hasattr(subscription, "dispose")
-                    and callable(subscription.dispose)
-                ):
-                    subscription.dispose()
-                    logger.info(f"Disposed subscription for skill: {name}")
-                elif subscription is not None:
-                    logger.warning(f"Skill {name} has a subscription but it's not disposable")
-
-                # unregister the skill
-                self.unregister_running_skill(name)
-                return f"Successfully terminated skill: {name}"
-
-            except Exception as e:
-                error_msg = f"Error terminating skill {name}: {e}"
-                logger.error(error_msg)
-                # Even on error, try to unregister the skill
-                self.unregister_running_skill(name)
-                return error_msg
-        else:
-            return f"No running skill found with name: {name}"
-
 
 # endregion SkillLibrary
 
@@ -265,29 +202,6 @@ class AbstractSkill(BaseModel):
 
     def clone(self) -> AbstractSkill:
         return AbstractSkill()
-
-    def register_as_running(  # type: ignore[no-untyped-def]
-        self, name: str, skill_library: SkillLibrary, subscription=None
-    ) -> None:
-        """
-        Register this skill as running in the skill library.
-
-        Args:
-            name: Name of the skill (will be converted to lowercase)
-            skill_library: The skill library to register with
-            subscription: Optional subscription associated with the skill
-        """
-        skill_library.register_running_skill(name, self, subscription)
-
-    def unregister_as_running(self, name: str, skill_library: SkillLibrary) -> None:
-        """
-        Unregister this skill from the skill library.
-
-        Args:
-            name: Name of the skill to remove (will be converted to lowercase)
-            skill_library: The skill library to unregister from
-        """
-        skill_library.unregister_running_skill(name)
 
     # ==== Tools ====
     def get_tools(self) -> Any:
@@ -318,14 +232,6 @@ class AbstractRobotSkill(AbstractSkill):
         print(
             f"{Colors.BLUE_PRINT_COLOR}Robot Skill Initialized with Robot: {robot}{Colors.RESET_COLOR}"
         )
-
-    def set_robot(self, robot: Robot) -> None:
-        """Set the robot reference for this skills instance.
-
-        Args:
-            robot: The robot instance to associate with these skills.
-        """
-        self._robot = robot
 
     def __call__(self):  # type: ignore[no-untyped-def]
         if self._robot is None:

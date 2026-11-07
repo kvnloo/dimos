@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, TypeAlias
+from typing import TYPE_CHECKING, Any
 
 from dimos_lcm.geometry_msgs import (
     PoseWithCovariance as LCMPoseWithCovariance,
@@ -29,11 +29,6 @@ if TYPE_CHECKING:
     from dimos.msgs.geometry_msgs.Vector3 import Vector3
 
 # Types that can be converted to/from PoseWithCovariance
-PoseWithCovarianceConvertable: TypeAlias = (
-    tuple[PoseConvertable, list[float] | np.ndarray]  # type: ignore[type-arg]
-    | LCMPoseWithCovariance
-    | dict[str, PoseConvertable | list[float] | np.ndarray]  # type: ignore[type-arg]
-)
 
 
 class PoseWithCovariance(LCMPoseWithCovariance):  # type: ignore[misc]

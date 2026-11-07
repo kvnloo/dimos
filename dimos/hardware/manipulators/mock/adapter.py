@@ -239,19 +239,6 @@ class MockAdapter:
     # Test Helpers (not part of Protocol)
     # =========================================================================
 
-    def set_error(self, code: int, message: str) -> None:
-        """Inject an error for testing error handling."""
-        self._error_code = code
-        self._error_message = message
-
-    def set_positions(self, positions: list[float]) -> None:
-        """Set positions directly for testing."""
-        self._positions = list(positions)
-
-    def set_efforts(self, efforts: list[float]) -> None:
-        """Set efforts directly for testing."""
-        self._efforts = list(efforts)
-
 
 def register(registry: AdapterRegistry) -> None:
     """Register this adapter with the registry."""

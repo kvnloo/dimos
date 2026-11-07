@@ -497,29 +497,3 @@ class BaseAgent:
             return loop.run_until_complete(self._process_query_async(agent_msg))
         finally:
             loop.close()
-
-    async def aquery(self, message: str | AgentMessage) -> AgentResponse:
-        """Asynchronous query method.
-
-        Args:
-            message: Either a string query or an AgentMessage with text and/or images
-
-        Returns:
-            AgentResponse object with content and tool information
-        """
-        # Convert string to AgentMessage if needed
-        if isinstance(message, str):
-            agent_msg = AgentMessage()
-            agent_msg.add_text(message)
-        else:
-            agent_msg = message
-
-        return await self._process_query_async(agent_msg)
-
-    def base_agent_dispose(self) -> None:
-        """Dispose of all resources and close gateway."""
-        self.response_subject.on_completed()
-        if self._executor:
-            self._executor.shutdown(wait=False)
-        if self.gateway:
-            self.gateway.close()

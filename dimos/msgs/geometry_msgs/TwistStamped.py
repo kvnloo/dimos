@@ -15,19 +15,15 @@
 from __future__ import annotations
 
 import time
-from typing import BinaryIO, TypeAlias
+from typing import BinaryIO
 
 from dimos_lcm.geometry_msgs import TwistStamped as LCMTwistStamped
 from plum import dispatch
 
 from dimos.msgs.geometry_msgs.Twist import Twist
-from dimos.msgs.geometry_msgs.Vector3 import VectorConvertable
 from dimos.types.timestamped import Timestamped
 
 # Types that can be converted to/from TwistStamped
-TwistConvertable: TypeAlias = (
-    tuple[VectorConvertable, VectorConvertable] | LCMTwistStamped | dict[str, VectorConvertable]
-)
 
 
 def sec_nsec(ts):  # type: ignore[no-untyped-def]

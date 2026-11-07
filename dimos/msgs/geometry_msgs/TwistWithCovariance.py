@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from typing import Any, TypeAlias
+from typing import TYPE_CHECKING, Any
 
 from dimos_lcm.geometry_msgs import (
     TwistWithCovariance as LCMTwistWithCovariance,
@@ -23,14 +23,11 @@ import numpy as np
 from plum import dispatch
 
 from dimos.msgs.geometry_msgs.Twist import Twist
-from dimos.msgs.geometry_msgs.Vector3 import Vector3, VectorConvertable
+
+if TYPE_CHECKING:
+    from dimos.msgs.geometry_msgs.Vector3 import Vector3, VectorConvertable
 
 # Types that can be converted to/from TwistWithCovariance
-TwistWithCovarianceConvertable: TypeAlias = (
-    tuple[Twist | tuple[VectorConvertable, VectorConvertable], list[float] | np.ndarray]  # type: ignore[type-arg]
-    | LCMTwistWithCovariance
-    | dict[str, Twist | tuple[VectorConvertable, VectorConvertable] | list[float] | np.ndarray]  # type: ignore[type-arg]
-)
 
 
 class TwistWithCovariance(LCMTwistWithCovariance):  # type: ignore[misc]

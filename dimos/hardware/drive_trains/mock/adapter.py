@@ -120,14 +120,6 @@ class MockTwistBaseAdapter:
     # Test Helpers (not part of Protocol)
     # =========================================================================
 
-    def set_odometry(self, odometry: list[float] | None) -> None:
-        """Set odometry directly for testing."""
-        self._odometry = list(odometry) if odometry is not None else None
-
-    def set_velocities_directly(self, velocities: list[float]) -> None:
-        """Set velocities directly for testing (bypasses DOF check)."""
-        self._velocities = list(velocities)
-
 
 def register(registry: TwistBaseAdapterRegistry) -> None:
     """Register this adapter with the registry."""

@@ -48,9 +48,6 @@ class MockedExploreNavSkill(NavigationSkillContainer):
         Module.__init__(self)
         self._skill_started = True
 
-    def _start_exploration(self, timeout):
-        return "Exploration completed successfuly"
-
     def _cancel_goal_and_stop(self):
         pass
 

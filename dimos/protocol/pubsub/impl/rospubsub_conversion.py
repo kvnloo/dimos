@@ -59,29 +59,6 @@ _ROS_TO_LCM_FIELD_MAP: dict[str, str] = {
 _LCM_TO_ROS_FIELD_MAP: dict[str, str] = {v: k for k, v in _ROS_TO_LCM_FIELD_MAP.items()}
 
 
-def get_dimos_type(msg_name: str) -> type[DimosMsg] | None:
-    """Try to import dimos.msgs type, return None if not found. Cached.
-
-    Args:
-        msg_name: Message name in format "package.MessageName" (e.g., "geometry_msgs.Vector3")
-
-    Returns:
-        The dimos message type, or None if not found
-    """
-    if msg_name in _dimos_type_cache:
-        return _dimos_type_cache[msg_name]
-
-    try:
-        package, name = msg_name.split(".")
-        module = importlib.import_module(f"dimos.msgs.{package}.{name}")
-        dimos_type = cast("type[DimosMsg]", getattr(module, name))
-        _dimos_type_cache[msg_name] = dimos_type
-        return dimos_type
-    except (ImportError, AttributeError, ValueError):
-        _dimos_type_cache[msg_name] = None
-        return None
-
-
 def derive_lcm_type(dimos_type: type[DimosMsg]) -> type[Any]:
     """Derive the LCM message type from a dimos message type.
 

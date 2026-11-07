@@ -277,10 +277,6 @@ class ObjectDBModule(Detection3DModule, TableStr):
     def stop(self):  # type: ignore[no-untyped-def]
         return super().stop()
 
-    def goto_object(self, object_id: str) -> Object3D | None:
-        """Go to object by id."""
-        return self.objects.get(object_id, None)
-
     def to_foxglove_scene_update(self) -> "SceneUpdate":
         """Convert all detections to a Foxglove SceneUpdate message.
 

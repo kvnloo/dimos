@@ -310,22 +310,3 @@ class WorldStateMonitor:
         if age is None:
             return True
         return age > max_age
-
-    def add_state_callback(
-        self,
-        callback: Callable[[str, JointState], None],
-    ) -> None:
-        """Add callback for state updates.
-
-        Args:
-            callback: Function called with (robot_id, joint_state) on each update
-        """
-        self._state_callbacks.append(callback)
-
-    def remove_state_callback(
-        self,
-        callback: Callable[[str, JointState], None],
-    ) -> None:
-        """Remove a state callback."""
-        if callback in self._state_callbacks:
-            self._state_callbacks.remove(callback)

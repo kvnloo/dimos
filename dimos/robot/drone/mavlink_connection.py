@@ -992,13 +992,6 @@ class MavlinkConnection:
         """Get full telemetry stream."""
         return self._telemetry_subject
 
-    def get_telemetry(self) -> dict[str, Any]:
-        """Get current telemetry."""
-        # Update telemetry multiple times to ensure we get data
-        for _ in range(5):
-            self.update_telemetry(timeout=0.2)
-        return self.telemetry.copy()
-
     def disconnect(self) -> None:
         """Disconnect from drone."""
         if self.mavlink:
@@ -1085,9 +1078,6 @@ class FakeMavlinkConnection(MavlinkConnection):
                 pass
 
             def set_position_target_local_ned_send(self, *args: Any, **kwargs: Any) -> None:
-                pass
-
-            def set_position_target_global_int_send(self, *args: Any, **kwargs: Any) -> None:
                 pass
 
         # Set up fake mavlink

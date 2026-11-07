@@ -24,7 +24,6 @@ from dimos.msgs.sensor_msgs import PointCloud2
 from dimos.utils.logging_config import setup_logger
 
 if TYPE_CHECKING:
-    from dimos.msgs.geometry_msgs import Vector3
     from dimos.perception.detection.type.detection3d.object import Object
 
 logger = setup_logger()
@@ -112,10 +111,6 @@ class ObjectDB:
         self._last_add_stats = stats
         return results
 
-    def get_last_add_stats(self) -> dict[str, int]:
-        with self._lock:
-            return dict(self._last_add_stats)
-
     def get_objects(self) -> list[Object]:
         """Get all permanent objects (detection_count >= threshold)."""
         with self._lock:
@@ -147,32 +142,6 @@ class ObjectDB:
             if object_id in self._pending_objects:
                 return self._pending_objects[object_id]
             return None
-
-    def find_nearest(
-        self,
-        position: Vector3,
-        name: str | None = None,
-    ) -> Object | None:
-        """Find nearest permanent object to a position, optionally filtered by name.
-
-        Args:
-            position: Position to search from
-            name: Optional name filter
-
-        Returns:
-            Nearest Object or None if no objects found
-        """
-        with self._lock:
-            candidates = [
-                obj
-                for obj in self._objects.values()
-                if obj.center is not None and (name is None or obj.name == name)
-            ]
-
-            if not candidates:
-                return None
-
-            return min(candidates, key=lambda obj: position.distance(obj.center))  # type: ignore[arg-type]
 
     def clear(self) -> None:
         """Clear all objects from the database."""

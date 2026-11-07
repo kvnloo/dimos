@@ -318,6 +318,3 @@ if DDS_AVAILABLE:
                 if not self._started:
                     self.start()
                 return self.dds.subscribe(self.topic, lambda msg, topic: callback(msg))
-
-
-class ZenohTransport(PubSubTransport[T]): ...

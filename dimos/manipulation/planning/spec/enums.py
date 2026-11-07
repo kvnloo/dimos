@@ -31,9 +31,6 @@ class IKStatus(Enum):
 
     SUCCESS = auto()
     NO_SOLUTION = auto()
-    SINGULARITY = auto()
-    JOINT_LIMITS = auto()
-    COLLISION = auto()
     TIMEOUT = auto()
 
 

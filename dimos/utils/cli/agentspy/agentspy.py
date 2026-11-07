@@ -207,8 +207,6 @@ class AgentSpyApp(App):  # type: ignore[type-arg]
                 f"[{style}]{content}[/{style}]"
             )
 
-    def refresh_display(self) -> None:
-        """Refresh the message display."""
         # Not needed anymore as messages are written directly to the log
 
     def action_clear(self) -> None:

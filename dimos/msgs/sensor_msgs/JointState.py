@@ -15,7 +15,6 @@
 from __future__ import annotations
 
 import time
-from typing import TypeAlias
 
 from dimos_lcm.sensor_msgs import JointState as LCMJointState
 from plum import dispatch
@@ -23,7 +22,6 @@ from plum import dispatch
 from dimos.types.timestamped import Timestamped
 
 # Types that can be converted to/from JointState
-JointStateConvertable: TypeAlias = dict[str, list[str] | list[float]] | LCMJointState
 
 
 def sec_nsec(ts):  # type: ignore[no-untyped-def]

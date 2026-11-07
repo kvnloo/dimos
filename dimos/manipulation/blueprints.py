@@ -242,47 +242,6 @@ def _make_xarm7_config(
     )
 
 
-def _make_piper_config(
-    name: str = "piper",
-    y_offset: float = 0.0,
-    joint_prefix: str = "",
-    coordinator_task: str | None = None,
-) -> RobotModelConfig:
-    """Create Piper robot config.
-
-    Args:
-        name: Robot name in Drake world
-        y_offset: Y-axis offset for base pose (for multi-arm setups)
-        joint_prefix: Prefix for joint name mapping (e.g., "piper_")
-        coordinator_task: Task name for coordinator RPC execution
-
-    Note:
-        Piper has 6 revolute joints (joint1-joint6) for the arm and 2 prismatic
-        joints (joint7, joint8) for the parallel jaw gripper.
-    """
-    # Piper arm joints (6-DOF)
-    joint_names = ["joint1", "joint2", "joint3", "joint4", "joint5", "joint6"]
-    joint_mapping = {f"{joint_prefix}{j}": j for j in joint_names} if joint_prefix else {}
-
-    return RobotModelConfig(
-        name=name,
-        urdf_path=_get_piper_urdf_path(),
-        base_pose=_make_base_pose(y=y_offset),
-        joint_names=joint_names,
-        end_effector_link="gripper_base",  # End of arm, before gripper fingers
-        base_link="arm_base",
-        package_paths=_get_piper_package_paths(),
-        xacro_args={},  # Piper xacro doesn't need special args
-        collision_exclusion_pairs=PIPER_GRIPPER_COLLISION_EXCLUSIONS,
-        auto_convert_meshes=True,
-        max_velocity=1.0,
-        max_acceleration=2.0,
-        joint_name_mapping=joint_mapping,
-        coordinator_task_name=coordinator_task,
-        home_joints=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-    )
-
-
 # =============================================================================
 # Blueprints
 # =============================================================================

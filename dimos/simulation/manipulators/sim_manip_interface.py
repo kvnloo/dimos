@@ -149,13 +149,6 @@ class SimManipInterface:
         self._engine.write_joint_command(JointState(velocity=velocities[: self._dof]))
         return True
 
-    def write_joint_efforts(self, efforts: list[float]) -> bool:
-        if not self._servos_enabled:
-            return False
-        self._control_mode = ControlMode.TORQUE
-        self._engine.write_joint_command(JointState(effort=efforts[: self._dof]))
-        return True
-
     def write_stop(self) -> bool:
         self._engine.hold_current_position()
         return True

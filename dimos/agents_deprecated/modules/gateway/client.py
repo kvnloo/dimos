@@ -21,7 +21,6 @@ import os
 from types import TracebackType
 from typing import Any
 
-import httpx
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from .tensorzero_embedded import TensorZeroEmbeddedGateway
@@ -61,26 +60,6 @@ class UnifiedGatewayClient:
         except Exception as e:
             logger.error(f"Failed to initialize TensorZero: {e}")
             raise
-
-    def _get_client(self) -> httpx.Client:
-        """Get or create sync HTTP client."""
-        if self._client is None:
-            self._client = httpx.Client(  # type: ignore[assignment]
-                base_url=self.gateway_url,  # type: ignore[arg-type]
-                timeout=self.timeout,
-                headers={"Content-Type": "application/json"},
-            )
-        return self._client  # type: ignore[return-value]
-
-    def _get_async_client(self) -> httpx.AsyncClient:
-        """Get or create async HTTP client."""
-        if self._async_client is None:
-            self._async_client = httpx.AsyncClient(  # type: ignore[assignment]
-                base_url=self.gateway_url,  # type: ignore[arg-type]
-                timeout=self.timeout,
-                headers={"Content-Type": "application/json"},
-            )
-        return self._async_client  # type: ignore[return-value]
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
     def inference(  # type: ignore[no-untyped-def]

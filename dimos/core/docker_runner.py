@@ -265,9 +265,6 @@ class DockerModule:
             "running": bool(self._running and _is_container_running(cfg, self._container_name)),
         }
 
-    def tail_logs(self, n: int = 200) -> str:
-        return _tail_logs(self._config, self._container_name, n=n)
-
     def set_transport(self, stream_name: str, transport: Any) -> bool:
         """Configure stream transport in container. Mirrors Module.set_transport() for autoconnect()."""
         topic = getattr(transport, "topic", None)

@@ -94,20 +94,3 @@ class CurrentLocationMap:
         size_max = width * (0.5 + self._center_width / 2)
 
         return x < size_min or x > size_max or y < size_min or y > size_max
-
-    def save_current_map_image(self, filepath: str = "osm_debug_map.png") -> str:
-        """Save the current OSM map image to a file for debugging.
-
-        Args:
-            filepath: Path where to save the image
-
-        Returns:
-            The filepath where the image was saved
-        """
-        if not self._map_image:
-            self._get_current_map()  # type: ignore[no-untyped-call]
-
-        if self._map_image is not None:
-            self._map_image.image.save(filepath)
-        logger.info(f"Saved OSM map image to {filepath}")
-        return filepath

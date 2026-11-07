@@ -321,11 +321,3 @@ class CPU_IPC_Factory:
 # ---------------------------
 # 4) Runtime selector
 # ---------------------------
-
-
-def make_frame_channel(  # type: ignore[no-untyped-def]
-    shape, dtype=np.uint8, prefer: str = "auto", device: int = 0
-) -> FrameChannel:
-    """Choose CUDA IPC if available (or requested), otherwise CPU SHM."""
-    # TODO: Implement the CUDA version of creating this factory
-    return CPU_IPC_Factory.create(shape, dtype=dtype)

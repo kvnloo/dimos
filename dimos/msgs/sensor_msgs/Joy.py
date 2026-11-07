@@ -15,7 +15,6 @@
 from __future__ import annotations
 
 import time
-from typing import TypeAlias
 
 from dimos_lcm.sensor_msgs import Joy as LCMJoy
 from plum import dispatch
@@ -23,9 +22,6 @@ from plum import dispatch
 from dimos.types.timestamped import Timestamped
 
 # Types that can be converted to/from Joy
-JoyConvertable: TypeAlias = (
-    tuple[list[float], list[int]] | dict[str, list[float] | list[int]] | LCMJoy
-)
 
 
 def sec_nsec(ts):  # type: ignore[no-untyped-def]

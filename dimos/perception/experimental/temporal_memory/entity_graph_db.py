@@ -194,28 +194,6 @@ class EntityGraphDB:
             for row in cursor.fetchall()
         ]
 
-    def get_entities_by_time(
-        self, time_window: tuple[float, float], first_seen: bool = True
-    ) -> list[dict[str, Any]]:
-        conn = self._get_connection()
-        cursor = conn.cursor()
-        ts_field = "first_seen_ts" if first_seen else "last_seen_ts"
-        cursor.execute(
-            f"SELECT * FROM entities WHERE {ts_field} BETWEEN ? AND ? ORDER BY {ts_field} DESC",
-            time_window,
-        )
-        return [
-            {
-                "entity_id": row["entity_id"],
-                "entity_type": row["entity_type"],
-                "descriptor": row["descriptor"],
-                "first_seen_ts": row["first_seen_ts"],
-                "last_seen_ts": row["last_seen_ts"],
-                "metadata": json.loads(row["metadata"]) if row["metadata"] else None,
-            }
-            for row in cursor.fetchall()
-        ]
-
     # ==================== Relation Operations ====================
 
     def add_relation(
@@ -346,28 +324,6 @@ class EntityGraphDB:
             "method": row["method"],
         }
 
-    def get_distance_history(self, entity_a_id: str, entity_b_id: str) -> list[dict[str, Any]]:
-        conn = self._get_connection()
-        cursor = conn.cursor()
-        if entity_a_id > entity_b_id:
-            entity_a_id, entity_b_id = entity_b_id, entity_a_id
-        cursor.execute(
-            "SELECT * FROM distances WHERE entity_a_id = ? AND entity_b_id = ? ORDER BY timestamp_s DESC",
-            (entity_a_id, entity_b_id),
-        )
-        return [
-            {
-                "entity_a_id": row["entity_a_id"],
-                "entity_b_id": row["entity_b_id"],
-                "distance_meters": row["distance_meters"],
-                "distance_category": row["distance_category"],
-                "confidence": row["confidence"],
-                "timestamp_s": row["timestamp_s"],
-                "method": row["method"],
-            }
-            for row in cursor.fetchall()
-        ]
-
     def get_nearby_entities(
         self, entity_id: str, max_distance: float, latest_only: bool = True
     ) -> list[dict[str, Any]]:
@@ -425,51 +381,6 @@ class EntityGraphDB:
         ]
 
     # ==================== Neighborhood Query ====================
-
-    def get_entity_neighborhood(
-        self,
-        entity_id: str,
-        max_hops: int = 2,
-        include_distances: bool = True,
-    ) -> dict[str, Any]:
-        visited_entities = {entity_id}
-        current_level = {entity_id}
-        all_relations: list[dict[str, Any]] = []
-        all_distances: list[dict[str, Any]] = []
-
-        for _ in range(max_hops):
-            next_level: set[str] = set()
-            for ent_id in current_level:
-                relations = self.get_relations_for_entity(ent_id)
-                all_relations.extend(relations)
-                for rel in relations:
-                    other_id = (
-                        rel["object_id"] if rel["subject_id"] == ent_id else rel["subject_id"]
-                    )
-                    if other_id not in visited_entities:
-                        next_level.add(other_id)
-                        visited_entities.add(other_id)
-                if include_distances:
-                    distances = self.get_nearby_entities(ent_id, max_distance=10.0)
-                    all_distances.extend(distances)
-                    for dist in distances:
-                        other_id = dist["entity_id"]
-                        if other_id not in visited_entities:
-                            next_level.add(other_id)
-                            visited_entities.add(other_id)
-            current_level = next_level
-            if not current_level:
-                break
-
-        entities = [self.get_entity(eid) for eid in visited_entities]
-        entities = [e for e in entities if e is not None]
-        return {
-            "center_entity": entity_id,
-            "entities": entities,
-            "relations": all_relations,
-            "distances": all_distances,
-            "num_hops": max_hops,
-        }
 
     # ==================== Stats / Summary ====================
 

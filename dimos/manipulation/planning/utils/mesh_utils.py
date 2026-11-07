@@ -34,7 +34,6 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 import re
-import shutil
 import tempfile
 from typing import TYPE_CHECKING
 
@@ -345,10 +344,3 @@ def pointcloud_to_convex_hull_obj(
     except Exception as e:
         logger.warning(f"Failed to write convex hull OBJ: {e}")
         return None
-
-
-def clear_cache() -> None:
-    """Clear the URDF cache directory."""
-    if _CACHE_DIR.exists():
-        shutil.rmtree(_CACHE_DIR)
-        logger.info(f"Cleared URDF cache: {_CACHE_DIR}")

@@ -300,23 +300,6 @@ class CartesianIKTask(BaseControlTask):
         with self._lock:
             return self._active and self._target_pose is not None
 
-    def get_current_ee_pose(self, state: CoordinatorState) -> pinocchio.SE3 | None:
-        """Get current end-effector pose via forward kinematics.
-
-        Useful for getting initial pose before starting tracking.
-
-        Args:
-            state: Current coordinator state
-
-        Returns:
-            Current EE pose as SE3, or None if joint state unavailable
-        """
-        q_current = self._get_current_joints(state)
-        if q_current is None:
-            return None
-
-        return self._ik.forward_kinematics(q_current)
-
     def forward_kinematics(self, joint_positions: NDArray[np.floating[Any]]) -> pinocchio.SE3:
         """Compute end-effector pose from joint positions.
 

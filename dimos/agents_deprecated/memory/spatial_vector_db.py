@@ -227,8 +227,8 @@ class SpatialVectorDB:
                 )
 
             # Get the image from visual memory
-            #image = self.visual_memory.get(lookup_id)
-            #result["image"] = image
+            # image = self.visual_memory.get(lookup_id)
+            # result["image"] = image
 
             processed_results.append(result)
 
@@ -265,28 +265,6 @@ class SpatialVectorDB:
             f"Text query: '{text}' returned {len(results['ids'] if 'ids' in results else [])} results"
         )
         return self._process_query_results(results)
-
-    def get_all_locations(self) -> list[tuple[float, float, float]]:
-        """Get all locations stored in the database."""
-        # Get all items from the collection without embeddings
-        results = self.image_collection.get(include=["metadatas"])
-
-        if not results or "metadatas" not in results or not results["metadatas"]:
-            return []
-
-        # Extract x, y coordinates from metadata
-        locations = []
-        for metadata in results["metadatas"]:
-            if isinstance(metadata, list) and metadata and isinstance(metadata[0], dict):
-                metadata = metadata[0]  # Handle nested metadata
-
-            if isinstance(metadata, dict) and "x" in metadata and "y" in metadata:
-                x = metadata.get("x", 0)
-                y = metadata.get("y", 0)
-                z = metadata.get("z", 0) if "z" in metadata else 0
-                locations.append((x, y, z))
-
-        return locations
 
     @property
     def image_storage(self):  # type: ignore[no-untyped-def]

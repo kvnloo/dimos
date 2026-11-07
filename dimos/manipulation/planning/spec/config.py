@@ -91,9 +91,3 @@ class RobotModelConfig:
             if u_name == urdf_name:
                 return coord_name
         return urdf_name
-
-    def get_coordinator_joint_names(self) -> list[str]:
-        """Get joint names in coordinator namespace."""
-        if not self.joint_name_mapping:
-            return self.joint_names
-        return [self.get_coordinator_joint_name(j) for j in self.joint_names]

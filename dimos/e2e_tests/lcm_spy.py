@@ -15,7 +15,6 @@
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 import math
-import pickle
 import threading
 import time
 from typing import Any
@@ -131,27 +130,6 @@ class LcmSpy(LCMService):
             timeout=timeout,
             error_message=f"Timeout waiting for '{topic}' to contain '{content_contains!r}'",
         )
-
-    def wait_for_message_pickle_result(
-        self,
-        topic: str,
-        predicate: Callable[[Any], bool],
-        fail_message: str,
-        timeout: float = 30.0,
-    ) -> None:
-        event = threading.Event()
-
-        def listener(msg: bytes) -> None:
-            data = pickle.loads(msg)
-            if predicate(data["res"]):
-                event.set()
-
-        with self.topic_listener(topic, listener):
-            self.wait_until(
-                condition=event.is_set,
-                timeout=timeout,
-                error_message=fail_message,
-            )
 
     def wait_for_message_result(
         self,

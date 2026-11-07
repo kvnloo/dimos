@@ -211,11 +211,15 @@ class LLMAgent(Agent):
                         }
                     ),
                     rxops.map(
-                        lambda data: f"{data['query']}\n\nCurrent objects detected:\n{data['objects']}"  # type: ignore[index]
+                        lambda data: (
+                            f"{data['query']}\n\nCurrent objects detected:\n{data['objects']}"
+                        )  # type: ignore[index]
                     ),
                     rxops.do_action(
-                        lambda x: print(f"\033[34mEnriched query: {x.split(chr(10))[0]}\033[0m")  # type: ignore[arg-type]
-                        or [print(f"\033[34m{line}\033[0m") for line in x.split(chr(10))[1:]]  # type: ignore[var-annotated]
+                        lambda x: (
+                            print(f"\033[34mEnriched query: {x.split(chr(10))[0]}\033[0m")  # type: ignore[arg-type]
+                            or [print(f"\033[34m{line}\033[0m") for line in x.split(chr(10))[1:]]
+                        )  # type: ignore[var-annotated]
                     ),
                 )
             )
@@ -526,9 +530,11 @@ class LLMAgent(Agent):
                 MyVidOps.encode_image(),
                 MyOps.print_emission(id="F", **print_emission_args),  # type: ignore[arg-type]
                 rxops.filter(
-                    lambda base64_and_dims: base64_and_dims is not None
-                    and base64_and_dims[0] is not None  # type: ignore[index]
-                    and base64_and_dims[1] is not None  # type: ignore[index]
+                    lambda base64_and_dims: (
+                        base64_and_dims is not None
+                        and base64_and_dims[0] is not None  # type: ignore[index]
+                        and base64_and_dims[1] is not None
+                    )  # type: ignore[index]
                 ),
                 MyOps.print_emission(id="G", **print_emission_args),  # type: ignore[arg-type]
                 rxops.flat_map(
@@ -657,30 +663,6 @@ class LLMAgent(Agent):
             rxops.observe_on(self.pool_scheduler),
             rxops.subscribe_on(self.pool_scheduler),
             rxops.share(),
-        )
-
-    def run_observable_query(self, query_text: str, **kwargs) -> Observable:  # type: ignore[no-untyped-def, type-arg]
-        """Creates an observable that processes a one-off text query to Agent and emits the response.
-
-        This method provides a simple way to send a text query and get an observable
-        stream of the response. It's designed for one-off queries rather than
-        continuous processing of input streams. Useful for testing and development.
-
-        Args:
-            query_text (str): The query text to process.
-            **kwargs: Additional arguments to pass to _observable_query. Supported args vary by agent type.
-                     For example, ClaudeAgent supports: base64_image, dimensions, override_token_limit,
-                     reset_conversation, thinking_budget_tokens
-
-        Returns:
-            Observable: An observable that emits the response as a string.
-        """
-        return create(
-            lambda observer, _: self._observable_query(
-                observer,  # type: ignore[arg-type]
-                incoming_query=query_text,
-                **kwargs,
-            )
         )
 
     def dispose_all(self) -> None:
@@ -895,23 +877,6 @@ class OpenAIAgent(LLMAgent):
         except Exception as e:
             logger.error(f"Unexpected error in API call: {e}")
             raise
-
-    def stream_query(self, query_text: str) -> Observable:  # type: ignore[type-arg]
-        """Creates an observable that processes a text query and emits the response.
-
-        This method provides a simple way to send a text query and get an observable
-        stream of the response. It's designed for one-off queries rather than
-        continuous processing of input streams.
-
-        Args:
-            query_text (str): The query text to process.
-
-        Returns:
-            Observable: An observable that emits the response as a string.
-        """
-        return create(
-            lambda observer, _: self._observable_query(observer, incoming_query=query_text)  # type: ignore[arg-type]
-        )
 
 
 # endregion OpenAIAgent Subclass (OpenAI-Specific Implementation)

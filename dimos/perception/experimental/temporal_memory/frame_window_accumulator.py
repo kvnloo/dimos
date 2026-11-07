@@ -126,11 +126,6 @@ class FrameWindowAccumulator:
             self._last_analysis_time = frames[-1].timestamp_s
             return frames
 
-    def mark_analysis_time(self, t: float) -> None:
-        """Manually advance the last-analysis timestamp (e.g. after a skip)."""
-        with self._lock:
-            self._last_analysis_time = t
-
     # ------------------------------------------------------------------
     # Accessors
     # ------------------------------------------------------------------

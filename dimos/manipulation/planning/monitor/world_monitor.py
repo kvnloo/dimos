@@ -35,7 +35,6 @@ if TYPE_CHECKING:
 
     from dimos.manipulation.planning.spec import (
         CollisionObjectMessage,
-        JointPath,
         Obstacle,
         RobotModelConfig,
         WorldRobotID,
@@ -312,29 +311,6 @@ class WorldMonitor:
         """Check if configuration is collision-free."""
         return self._world.check_config_collision_free(robot_id, joint_state)
 
-    def is_path_valid(
-        self, robot_id: WorldRobotID, path: JointPath, step_size: float = 0.05
-    ) -> bool:
-        """Check if path is collision-free with interpolation.
-
-        Args:
-            robot_id: Robot to check
-            path: List of JointState waypoints
-            step_size: Max step size for interpolation (radians)
-
-        Returns:
-            True if entire path is collision-free
-        """
-        if len(path) < 2:
-            return len(path) == 0 or self._world.check_config_collision_free(robot_id, path[0])
-
-        # Check each edge
-        for i in range(len(path) - 1):
-            if not self._world.check_edge_collision_free(robot_id, path[i], path[i + 1], step_size):
-                return False
-
-        return True
-
     def get_min_distance(self, robot_id: WorldRobotID) -> float:
         """Get minimum distance to obstacles for current state."""
         with self._world.scratch_context() as ctx:
@@ -472,10 +448,6 @@ class WorldMonitor:
     def world(self) -> WorldSpec:
         """Get underlying WorldSpec. Not thread-safe for modifications."""
         return self._world
-
-    def get_state_monitor(self, robot_id: str) -> WorldStateMonitor | None:
-        """Get state monitor for a robot (may be None)."""
-        return self._state_monitors.get(robot_id)
 
     @property
     def obstacle_monitor(self) -> WorldObstacleMonitor | None:

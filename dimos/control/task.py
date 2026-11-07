@@ -61,10 +61,6 @@ class ResourceClaim:
     priority: int = 0
     mode: ControlMode = ControlMode.POSITION
 
-    def conflicts_with(self, other: ResourceClaim) -> bool:
-        """Check if two claims compete for the same joints."""
-        return bool(self.joints & other.joints)
-
 
 @dataclass
 class JointStateSnapshot:
@@ -88,14 +84,6 @@ class JointStateSnapshot:
     def get_position(self, joint_name: JointName) -> float | None:
         """Get position for a specific joint."""
         return self.joint_positions.get(joint_name)
-
-    def get_velocity(self, joint_name: JointName) -> float | None:
-        """Get velocity for a specific joint."""
-        return self.joint_velocities.get(joint_name)
-
-    def get_effort(self, joint_name: JointName) -> float | None:
-        """Get effort for a specific joint."""
-        return self.joint_efforts.get(joint_name)
 
 
 @dataclass

@@ -11,10 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import asyncio
 from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 import pytest
+
+if TYPE_CHECKING:
+    import asyncio
 
 from dimos.core.core import rpc
 from dimos.core.module import Module
@@ -41,19 +44,6 @@ class Consumer:
         self.testf = counter
         self._tasks: set[asyncio.Task[None]] = set()
         print("consumer init with", counter)
-
-    async def waitcall(self, n: int):
-        async def task() -> None:
-            await asyncio.sleep(n)
-
-            print("sleep finished, calling")
-            res = await self.testf(n)
-            print("res is", res)
-
-        background_task = asyncio.create_task(task())
-        self._tasks.add(background_task)
-        background_task.add_done_callback(self._tasks.discard)
-        return n
 
 
 class Counter(Module):

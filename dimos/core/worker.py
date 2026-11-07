@@ -132,12 +132,6 @@ def get_forkserver_context() -> Any:
     return _forkserver_ctx
 
 
-def reset_forkserver_context() -> None:
-    """Reset the forkserver context. Used in tests to ensure clean state."""
-    global _forkserver_ctx
-    _forkserver_ctx = None
-
-
 _worker_ids = SequentialIds()
 _module_ids = SequentialIds()
 

@@ -282,24 +282,3 @@ class FastImageGenerator:
 
 # Convenience function for backward compatibility
 _generator: FastImageGenerator | None = None
-
-
-def random_image(width: int, height: int) -> NDArray[np.uint8]:
-    """
-    Generate an image with visual features suitable for encoding tests.
-    Maintains state for efficient stream generation.
-
-    Args:
-        width: Image width in pixels
-        height: Image height in pixels
-
-    Returns:
-        numpy array of shape (height, width, 3) with uint8 values
-    """
-    global _generator
-
-    # Initialize or reinitialize if dimensions changed
-    if _generator is None or _generator.width != width or _generator.height != height:
-        _generator = FastImageGenerator(width, height)
-
-    return _generator.generate_frame()
